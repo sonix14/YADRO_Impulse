@@ -6,14 +6,17 @@ import (
 )
 
 func main() {
-	fmt.Println("Enter data:")
-	n, containers := ScanData()
-	if n != 0 || containers != nil {
-		if CanBeSorted(n, containers) {
-			fmt.Println("yes")
-		} else {
-			fmt.Println("no")
-		}
+	fmt.Println("enter data:")
+	n, containers, err := ScanData()
+	if err != nil {
+		fmt.Println(err.Error())
+		return
+	}
+
+	if CanBeSorted(n, containers) {
+		fmt.Println("yes")
+	} else {
+		fmt.Println("no")
 	}
 }
 
@@ -48,12 +51,12 @@ func CanBeSorted(n int, containers [][]int) bool {
 	return true
 }
 
-func ScanData() (int, [][]int) {
+func ScanData() (int, [][]int, error) {
 	var n int
 	fmt.Scan(&n)
 	if n < 1 || n > 100 {
-		fmt.Println("Wrong number of containers and colors!")
-		return 0, nil
+		err := fmt.Errorf("wrong number of containers and colors! (%d)", n)
+		return 0, nil, err
 	}
 
 	containers := make([][]int, n)
@@ -62,10 +65,10 @@ func ScanData() (int, [][]int) {
 		for j := 0; j < n; j++ {
 			fmt.Scan(&containers[i][j])
 			if containers[i][j] < 0 || containers[i][j] > 1000000000 {
-				fmt.Printf("Wrong number of balls of the same color in one container! (%v)", containers[i][j])
-				return 0, nil
+				err := fmt.Errorf("wrong number of balls of the same color in one container! (%v)", containers[i][j])
+				return 0, nil, err
 			}
 		}
 	}
-	return n, containers
+	return n, containers, nil
 }
